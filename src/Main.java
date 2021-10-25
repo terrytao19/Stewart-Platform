@@ -1,3 +1,5 @@
+import helper.*;
+
 public class Main {
     public static void main(String[] args) {
         Point origin = new Point(0.0,0.0,0.0,0.0,0.0,0.0);

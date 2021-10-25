@@ -1,6 +1,7 @@
 package helper;
 //points stored as Arraylist of 6 indices: [x,y,z,i,j,k]
 //translations in mm and rotations in degrees
+//
 
 import java.util.ArrayList;
 

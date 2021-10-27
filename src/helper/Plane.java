@@ -1,7 +1,7 @@
 package helper;
 
 public class Plane {
-
+    //
     //represents translation / rotation from master plane
     private final Point fromBase;
 

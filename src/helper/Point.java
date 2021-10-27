@@ -1,8 +1,8 @@
 package helper;
 //points stored as Arraylist of 6 indices: [x,y,z,i,j,k]
 //translations in mm and rotations in degrees
-//
 
+import java.net.SocketOption;
 import java.util.ArrayList;
 
 public class Point {
@@ -31,6 +31,11 @@ public class Point {
         point.add(i);
         point.add(k);
         point.add(j);
+    }
+
+    //returns point array, for debugging
+    public ArrayList<Double> getPoint() {
+        return(point);
     }
 
     //returns 3 index array with translations
@@ -70,7 +75,32 @@ public class Point {
     //returns scalar distance to other point
     public double distanceTo(Point toPoint) {
         ArrayList<Double> translation = translationTo(toPoint);
-        double intermediate = Math.hypot(translation.get(0), translation.get(1));
-        return(Math.hypot(intermediate, translation.get(2)));
+        return(Math.sqrt(Math.pow(translation.get(0), 2) + Math.pow(translation.get(1), 2) + Math.pow(translation.get(2), 2)));
+    }
+
+    //rotates point around axis
+    //it works don't question it
+    public void rotateAboutZ(double angle) {
+        point.set(5, (angle + point.get(5)) % 360);
+        angle = Math.toRadians(angle % 360);
+        double hypot = this.distanceTo(new Point(0, 0, point.get(2)));
+        double curAngle = Math.atan2(point.get(1), point.get(0));
+        angle = (angle + curAngle) % (2 * Math.PI);
+        point.set(0, Math.cos(angle) * hypot);
+        point.set(1, Math.sin(angle) * hypot);
+    }
+
+    //rotate to angle about Z axis
+    public void rotateToZ(double desAngle) {
+        desAngle = Math.toRadians(desAngle % 360);
+        double curAngle = Math.atan2(point.get(1), point.get(0));
+        rotateAboutZ(Math.toDegrees(desAngle - curAngle));
+    }
+
+    //returns angle to desired angle
+    public double getAngleTo(double desAngle) {
+        desAngle = Math.toRadians(desAngle % 360);
+        double curAngle = Math.atan2(point.get(1), point.get(0));
+        return(desAngle - curAngle);
     }
 }

@@ -10,6 +10,6 @@ public class Main {
         Point BPlane = new Point(0.0,originToSetA,0.0,90.0,0.0, 0.0);
         BPlane.rotateAboutZ(120);
         Plane B = new Plane(BPlane);
-        System.out.println(B.getNormalDistance(test));
+        B.drawSphereCircle(test,5,0);
     }
 }

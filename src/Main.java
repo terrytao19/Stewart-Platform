@@ -3,6 +3,7 @@ import helper.*;
 public class Main {
     public static void main(String[] args) {
 
+
         double originToSetA = -10.0;
 
         Point origin = new Point(0.0,0.0,0.0,0.0,0.0,0.0);

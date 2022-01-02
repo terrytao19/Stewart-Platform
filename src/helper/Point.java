@@ -38,6 +38,16 @@ public class Point {
         return(point);
     }
 
+    public void translateTo(double x, double y, double z) {
+        point.set(0,x);
+        point.set(1,y);
+        point.set(2,z);
+    }
+
+    public void translateBy(double x, double y, double z) {
+        translateTo(point.get(0) + x,point.get(1) + y,point.get(2) + z);
+    }
+
     //returns 3 index array with translations
     public ArrayList<Double> translationTo(Point toPoint) {
 
@@ -80,6 +90,7 @@ public class Point {
 
     //rotates point around axis
     //it works don't question it
+    //ACCEPTS DEGREES
     public void rotateAboutZ(double angle) {
         point.set(5, (angle + point.get(5)) % 360);
         angle = Math.toRadians(angle % 360);

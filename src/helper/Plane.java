@@ -5,13 +5,13 @@ import java.util.Arrays;
 
 public class Plane {
 
-    public double servoArmLength = 10;
-    public double legLength = 100;
+    private double servoArmLength;
+    private double legLength;
     //Distance from center of 2 servos to servo center
-    public double servoDistX = 15;
+    private double servoDistX;
 
     //represents translation / rotation from master plane
-    private final Point fromBase;
+    private Point fromBase;
 
     //indexes: 0 = sphere right, 1 = servo right, 2 = sphere left, 3 = servo left
     private ArrayList<ArrayList<Double>> circleList = new ArrayList<>();
@@ -19,18 +19,24 @@ public class Plane {
 
     public Plane() {
         fromBase = new Point(0.0,0.0,0.0,0.0,0.0,0.0);
-        circleList.add(zero);
-        circleList.add(zero);
-        circleList.add(zero);
-        circleList.add(zero);
+        ArrayList<Double> temp = new ArrayList<>();
+        temp.add(0.0);
+        temp.add(0.0);
+        temp.add(0.0);
+        circleList.add(temp);
+        circleList.add(temp);
+        circleList.add(temp);
+        circleList.add(temp);
+        servoArmLength = 0;
+        legLength = 0;
+        servoDistX = 0;
     }
 
-    public Plane(Point thisFromBase) {
+    public void setConstants(Point thisFromBase, double thisServoArmLength, double thisLegLength, double thisServoDistX) {
         fromBase = thisFromBase;
-        circleList.add(zero);
-        circleList.add(zero);
-        circleList.add(zero);
-        circleList.add(zero);
+        servoArmLength = thisServoArmLength;
+        legLength = thisLegLength;
+        servoDistX = thisServoDistX;
     }
 
     public double getNormalDistance(Point toPoint) {
@@ -45,6 +51,7 @@ public class Plane {
     //returns arraylist with [x,y,r], to be used in drawCircle
     public ArrayList<Double> getSphereIntersect(Point sphereCenter, double legLength) {
         double normDist = this.getNormalDistance(sphereCenter);
+        //TODO: if sphere center too far, this will take sqrt of negative value, should have exception
         double radius = Math.sqrt(Math.pow(legLength, 2) - Math.pow(normDist, 2));
         ArrayList<Double> circle = new ArrayList<>();
         sphereCenter.rotateAboutZ(Math.toDegrees(fromBase.getAngleTo(270)));
@@ -59,9 +66,10 @@ public class Plane {
 
     //circle: [x,y,r]
     public void drawCircle(ArrayList<Double> circle, int index) {
-        circleList.add(index, circle);
+        circleList.set(index, circle);
     }
 
+    //used in wrapper
     public void drawSphereCircle(Point sphereCenter, double legLength, int index) {
         ArrayList<Double> circle = this.getSphereIntersect(sphereCenter, legLength);
         drawCircle(circle, index);
@@ -85,8 +93,9 @@ public class Plane {
 
     public double getTheta1(int cirPlatform, int cirBase) {
         //This is horrible.
-        //NOT GENERALIZED AT ALL!!! WHY 1000?!?!?!?!?!
-        double theta1 = lawCosine(getDistanceBetweenCircles(cirPlatform,cirBase),1000,Math.hypot(circleList.get(cirPlatform).get(1)-circleList.get(cirBase).get(1),Math.abs(circleList.get(cirPlatform).get(0)-circleList.get(cirBase).get(0))));
+        //NOT GENERALIZED AT ALL!!! WHY 500?!?!?!?!?!
+        //TODO:getTheta1 not work, getTheta2 does. Hypothesis: horrible code.
+        double theta1 = lawCosine(getDistanceBetweenCircles(cirPlatform,cirBase),100,Math.hypot(circleList.get(cirPlatform).get(1)-circleList.get(cirBase).get(1),Math.abs(circleList.get(cirPlatform).get(0)-circleList.get(cirBase).get(0))));
         return(theta1);
     }
 
@@ -96,7 +105,7 @@ public class Plane {
 
     //does both t1+t2 and t1-t2 and solves for resulting points, compares distances to adjacent platform vertex, takes farthest, and returns servo
     //angle (polar) in deg
-    //I hate the if statements as well just deal with it.
+    //I hate the if's as well just deal with it.
     public double getCorrectServoAngle(String servoSide) {
         if(servoSide.equals("right")) {
             double t1 = getTheta1(0,1);
